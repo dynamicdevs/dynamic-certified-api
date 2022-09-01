@@ -39,4 +39,23 @@ export class CertificateSheetLib {
     });
     return result.data;
   }
+
+  public async setValues(
+    range: string,
+    majorDimension: string,
+    values: string[],
+  ) {
+    const service = google.sheets({ version: 'v4', auth: this.tokenGoogleApi });
+    const result = await service.spreadsheets.values.update({
+      spreadsheetId: this.spreadsheetId,
+      range: range,
+      valueInputOption: 'USER_ENTERED',
+      requestBody: {
+        majorDimension: majorDimension,
+        values: [values],
+      },
+    });
+
+    return result.data;
+  }
 }

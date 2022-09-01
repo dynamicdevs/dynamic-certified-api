@@ -1,6 +1,6 @@
 import { CertificateResponseDto } from '@dtos/certificate.dto';
 import { Controller, Get, Param } from '@nestjs/common';
-import { CertificatesService } from './certificates.services';
+import { CertificatesService } from './certificates.service';
 
 @Controller('certificates')
 export class CertificatesController {

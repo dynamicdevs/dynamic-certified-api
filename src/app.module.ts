@@ -5,7 +5,8 @@ import { AppService } from './app.service';
 
 import config from '@env';
 import Joi from 'joi';
-import { CertificatesModules } from '@certificates/certificates.module';
+import { CertificatesModule } from '@certificates/certificates.module';
+import { GeneratorModule } from './generator/generator.module';
 
 @Module({
   imports: [
@@ -14,7 +15,8 @@ import { CertificatesModules } from '@certificates/certificates.module';
       load: [config],
       isGlobal: true,
     }),
-    CertificatesModules,
+    CertificatesModule,
+    GeneratorModule,
   ],
   controllers: [AppController],
   providers: [AppService],
