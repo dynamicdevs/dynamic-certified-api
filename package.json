@@ -18,13 +18,16 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "start:azure": "npm run build && func host start"
   },
   "dependencies": {
-    "@nestjs/common": "^9.0.0",
+    "@azure/functions": "^1.0.3",
+    "@nestjs/azure-func-http": "^0.8.0",
+    "@nestjs/common": "^8.4.7",
     "@nestjs/config": "^2.2.0",
-    "@nestjs/core": "^9.0.0",
-    "@nestjs/platform-express": "^9.0.0",
+    "@nestjs/core": "^8.4.7",
+    "@nestjs/platform-express": "^8.4.7",
     "googleapis": "^107.0.0",
     "joi": "^17.6.0",
     "reflect-metadata": "^0.1.13",
@@ -34,7 +37,7 @@
   "devDependencies": {
     "@nestjs/cli": "^9.0.0",
     "@nestjs/schematics": "^9.0.0",
-    "@nestjs/testing": "^9.0.0",
+    "@nestjs/testing": "^8.4.7",
     "@types/express": "^4.17.13",
     "@types/jest": "28.1.4",
     "@types/node": "^16.0.0",
