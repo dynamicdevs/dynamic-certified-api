@@ -8,9 +8,9 @@ export type Certificate = {
   phoneNumber: string;
   country: string;
   issueDate: string;
-  certificateUrl: string;
+  certificateImgUrl: string;
+  certificatePdfUrl: string;
   observations: string;
-  fullName?: string;
   shouldBeGenerated: string;
   templateName: string;
 };

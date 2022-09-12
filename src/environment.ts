@@ -6,7 +6,8 @@ interface IEnvironment {
   serviceAccountEmail: string;
   serviceAccountPrivateKey: string;
   spreadsheetId: string;
-  urlBase: string;
+  certificatesUrl: string;
+  assetsUrl: string;
   websiteUrl: string;
   azureStorageConnection: string;
   containerName: string;
@@ -16,7 +17,8 @@ export const environment: IEnvironment = {
   serviceAccountEmail: process.env.SERVICE_ACCOUNT_EMAIL,
   serviceAccountPrivateKey: process.env.SERVICE_ACCOUNT_PRIVATE_KEY,
   spreadsheetId: process.env.SPREADSHEET_ID,
-  urlBase: process.env.STORAGE_URL_BASE,
+  certificatesUrl: process.env.CERTIFICATES_URL,
+  assetsUrl: process.env.ASSETS_URL,
   websiteUrl: process.env.WEBSITE_URL,
   azureStorageConnection: process.env.AZURE_STORAGE_CONNECTION,
   containerName: process.env.CONTAINER_NAME,

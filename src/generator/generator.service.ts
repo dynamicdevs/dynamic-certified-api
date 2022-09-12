@@ -3,7 +3,7 @@ import { Certificate } from '@models';
 import { CERTIFICATE_SHEET_NAME, longDateFormat } from '@utils';
 import { CertificateSheetLib } from '@lib/certificateSheet.lib';
 import { CertificatesService } from '@certificates/certificates.service';
-import { Conditional, Template } from '@enum';
+import { Conditional } from '@enum';
 import { ConfigType } from '@nestjs/config';
 import { Inject, Injectable } from '@nestjs/common';
 import { PdfService } from './services/pdf.service';
@@ -20,7 +20,8 @@ export class GeneratorService {
   private websiteUrl: string;
   private azureConnection: string;
   private containerName: string;
-  private urlBase: string;
+  private certificatesUrl: string;
+  private assetsUrl: string;
 
   constructor(
     @Inject(config.KEY) private configService: ConfigType<typeof config>,
@@ -31,7 +32,8 @@ export class GeneratorService {
     this.websiteUrl = this.configService.websiteUrl;
     this.azureConnection = this.configService.azureStorageConnection;
     this.containerName = this.configService.containerName;
-    this.urlBase = this.configService.urlBase;
+    this.certificatesUrl = this.configService.certificatesUrl;
+    this.assetsUrl = this.configService.assetsUrl;
   }
 
   public async generateCerficates() {
@@ -44,9 +46,7 @@ export class GeneratorService {
           certificate.shouldBeGenerated.trim().toLocaleUpperCase() ===
             Conditional.YES
         ) {
-          certificate.issueDate = longDateFormat(certificate.issueDate);
-          certificate.name = certificate.name.trim().split(' ')[0];
-          certificate.lastname = certificate.lastname.trim().split(' ')[0];
+          certificate = this.formatData(certificate);
 
           const path = `src/outputs/${certificate.eventCode}/${certificate.id}`;
           const storagePath = `${certificate.eventCode}/${certificate.id}`;
@@ -101,6 +101,15 @@ export class GeneratorService {
     this.certificateSheetLib.setValues(range, 'COLUMNS', values);
   }
 
+  private formatData(certificate: Certificate) {
+    certificate.issueDate = longDateFormat(certificate.issueDate);
+    certificate.name = certificate.name.trim().split(' ')[0];
+    certificate.lastname = certificate.lastname.trim().split(' ')[0];
+    certificate.certificateImgUrl = '';
+
+    return certificate;
+  }
+
   private async generateImage<Type>(
     data: Type,
     template: string,
@@ -112,7 +121,8 @@ export class GeneratorService {
       content: [
         {
           ...data,
-          urlBase: this.urlBase,
+          certificatesUrl: this.certificatesUrl,
+          assetsUrl: this.assetsUrl,
           output: `${path}/${filename}.png`,
         },
       ],
