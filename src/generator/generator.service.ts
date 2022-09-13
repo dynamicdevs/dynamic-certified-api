@@ -7,9 +7,11 @@ import { Conditional } from '@enum';
 import { ConfigType } from '@nestjs/config';
 import { Inject, Injectable } from '@nestjs/common';
 import { PdfService } from './services/pdf.service';
+import { resolve } from 'path';
+import { v4 as uuidV4 } from 'uuid';
+
 import config from '@env';
 import nodeHtmlToImage from 'node-html-to-image';
-import { resolve } from 'path';
 
 import * as fs from 'fs';
 import * as QRCode from 'qrcode';
@@ -22,6 +24,8 @@ export class GeneratorService {
   private containerName: string;
   private certificatesUrl: string;
   private assetsUrl: string;
+  private qrFilename: string;
+  private outputPath: string;
 
   constructor(
     @Inject(config.KEY) private configService: ConfigType<typeof config>,
@@ -34,6 +38,8 @@ export class GeneratorService {
     this.containerName = this.configService.containerName;
     this.certificatesUrl = this.configService.certificatesUrl;
     this.assetsUrl = this.configService.assetsUrl;
+    this.outputPath = 'src/ouputs';
+    this.qrFilename = 'code-qr.png';
   }
 
   public async generateCerficates() {
@@ -42,49 +48,25 @@ export class GeneratorService {
     const values = await Promise.all(
       certificates.map(async (certificate) => {
         if (
-          certificate.shouldBeGenerated !== undefined &&
+          certificate.shouldBeGenerated &&
           certificate.shouldBeGenerated.trim().toLocaleUpperCase() ===
             Conditional.YES
         ) {
           certificate = this.formatData(certificate);
 
-          const path = `src/outputs/${certificate.eventCode}/${certificate.id}`;
-          const storagePath = `${certificate.eventCode}/${certificate.id}`;
-          const filename = this.getFilename(certificate);
+          const path = `${certificate.eventCode}/${certificate.id}`;
 
-          const templateUrl = `src/generator/templates/${certificate.templateName}.html`;
-          const template = fs.readFileSync(
-            resolve(process.cwd(), templateUrl),
-            'utf8',
-          );
+          if (!fs.existsSync(`${this.outputPath}/${path}`)) {
+            fs.mkdirSync(`${this.outputPath}/${path}`, { recursive: true });
+          }
 
-          const response = await this.generateQR(path, certificate.id);
+          try {
+            await this.generateFiles(certificate, path);
+          } catch (err) {
+            throw new Error(err);
+          }
 
-          if (!response) return;
-
-          const responseQR = this.upload(path, storagePath, 'code-qr.png');
-
-          if (!responseQR) return;
-
-          const responsePDF = await this.pdfService.generatePdfByTemplate(
-            certificate,
-            template,
-            path,
-            filename,
-          );
-
-          if (responsePDF) this.upload(path, storagePath, `${filename}.pdf`);
-
-          const responseImage = await this.generateImage(
-            certificate,
-            template,
-            path,
-            filename,
-          );
-
-          if (responseImage) this.upload(path, storagePath, `${filename}.png`);
-
-          fs.rm(path, { recursive: true }, (err) => {
+          fs.rm(`${this.outputPath}/${path}`, { recursive: true }, (err) => {
             if (err) {
               throw err;
             }
@@ -101,20 +83,66 @@ export class GeneratorService {
     this.certificateSheetLib.setValues(range, 'COLUMNS', values);
   }
 
+  private getFilename(certificate: Certificate) {
+    const attendee = `${certificate.name}-${certificate.lastname}`;
+
+    return `${attendee}-${certificate.eventName.trim().replace(/\s/g, '-')}`;
+  }
+
   private formatData(certificate: Certificate) {
+    const filename = this.getFilename(certificate);
+    certificate.id = certificate.id || uuidV4();
     certificate.issueDate = longDateFormat(certificate.issueDate);
     certificate.name = certificate.name.trim().split(' ')[0];
     certificate.lastname = certificate.lastname.trim().split(' ')[0];
-    certificate.certificateImgUrl = '';
+
+    const path = `${certificate.eventCode}/${certificate.id}/${filename}`;
+    certificate.certificateImgUrl = `${path}.png`;
+    certificate.certificatePdfUrl = `${path}.pdf`;
 
     return certificate;
+  }
+
+  private async generateFiles(certificate: Certificate, path: string) {
+    const qrPath = `${path}/${this.qrFilename}`;
+    const qrContent = `${this.websiteUrl}/${certificate.id}`;
+
+    const response = await this.generateQR(qrPath, qrContent);
+
+    if (!response) throw new Error('QR code was not generated');
+
+    const responseQR = this.upload(qrPath);
+
+    if (!responseQR)
+      throw new Error('QR code files was not upload to storage.');
+
+    const templateUrl = `src/generator/templates/${certificate.templateName}.html`;
+    const template = fs.readFileSync(
+      resolve(process.cwd(), templateUrl),
+      'utf8',
+    );
+
+    const responsePDF = await this.pdfService.generatePdfByTemplate(
+      certificate,
+      template,
+      `${this.outputPath}/${certificate.certificatePdfUrl}`,
+    );
+
+    if (responsePDF) this.upload(certificate.certificatePdfUrl);
+
+    const responseImage = await this.generateImage(
+      certificate,
+      template,
+      `${this.outputPath}/${certificate.certificateImgUrl}`,
+    );
+
+    if (responseImage) this.upload(certificate.certificateImgUrl);
   }
 
   private async generateImage<Type>(
     data: Type,
     template: string,
     path: string,
-    filename: string,
   ) {
     const options = {
       html: template,
@@ -123,7 +151,7 @@ export class GeneratorService {
           ...data,
           certificatesUrl: this.certificatesUrl,
           assetsUrl: this.assetsUrl,
-          output: `${path}/${filename}.png`,
+          output: path,
         },
       ],
     };
@@ -137,24 +165,12 @@ export class GeneratorService {
   }
 
   private async generateQR(path: string, value: string) {
-    if (!fs.existsSync(path)) {
-      fs.mkdirSync(path, { recursive: true });
-    }
-
-    const url = `${this.websiteUrl}/${value}`;
-
     try {
-      await QRCode.toFile(`${path}/code-qr.png`, url);
+      await QRCode.toFile(`${this.outputPath}/${path}`, value);
       return true;
     } catch (err) {
       throw new Error(err);
     }
-  }
-
-  private getFilename(certificate: Certificate) {
-    const attendee = `${certificate.name}-${certificate.lastname}`;
-
-    return `${attendee}-${certificate.eventName.trim().replace(/\s/g, '-')}`;
   }
 
   private getBlobClient(fileName: string): BlockBlobClient {
@@ -168,16 +184,14 @@ export class GeneratorService {
     return blobClient;
   }
 
-  private async upload(
-    localPath: string,
-    storagePath: string,
-    fileName: string,
-  ) {
+  private async upload(path: string) {
+    const localPath = `${this.outputPath}/${path}`;
+
     if (fs.existsSync(localPath)) {
       try {
         const readFile = util.promisify(fs.readFile);
-        const data = await readFile(`${localPath}/${fileName}`);
-        const blobClient = this.getBlobClient(`${storagePath}/${fileName}`);
+        const data = await readFile(localPath);
+        const blobClient = this.getBlobClient(path);
         await blobClient.uploadData(data);
         return true;
       } catch (err) {
