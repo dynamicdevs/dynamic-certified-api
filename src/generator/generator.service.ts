@@ -43,9 +43,9 @@ export class GeneratorService {
   }
 
   public async generateCerficates() {
-    const certificates = await this.certificatesService.getCertificatesList();
+    let certificates = await this.certificatesService.getCertificatesList();
 
-    const values = await Promise.all(
+    certificates = await Promise.all(
       certificates.map(async (certificate) => {
         if (
           certificate.shouldBeGenerated &&
@@ -71,16 +71,27 @@ export class GeneratorService {
               throw err;
             }
           });
-
-          return Conditional.NO;
         }
-        return;
+        return certificate;
       }),
     );
 
-    const range = `${CERTIFICATE_SHEET_NAME}!Q2`;
-
-    this.certificateSheetLib.setValues(range, 'COLUMNS', values);
+    this.updateColumnData('id', `${CERTIFICATE_SHEET_NAME}!A2`, certificates);
+    this.updateColumnData(
+      'certificateImgUrl',
+      `${CERTIFICATE_SHEET_NAME}!K2`,
+      certificates,
+    );
+    this.updateColumnData(
+      'certificatePdfUrl',
+      `${CERTIFICATE_SHEET_NAME}!L2`,
+      certificates,
+    );
+    this.updateColumnData(
+      'shouldBeGenerated',
+      `${CERTIFICATE_SHEET_NAME}!Q2`,
+      certificates,
+    );
   }
 
   private getFilename(certificate: Certificate) {
@@ -95,6 +106,7 @@ export class GeneratorService {
     certificate.issueDate = longDateFormat(certificate.issueDate);
     certificate.name = certificate.name.trim().split(' ')[0];
     certificate.lastname = certificate.lastname.trim().split(' ')[0];
+    certificate.shouldBeGenerated = Conditional.NO;
 
     const path = `${certificate.eventCode}/${certificate.id}/${filename}`;
     certificate.certificateImgUrl = `${path}.png`;
@@ -198,5 +210,15 @@ export class GeneratorService {
         throw new Error(err);
       }
     }
+  }
+
+  private updateColumnData(
+    property: keyof Certificate,
+    range: string,
+    certificates: Certificate[],
+  ) {
+    const values = certificates.map((certificate) => certificate[property]);
+
+    this.certificateSheetLib.setValues(range, 'COLUMNS', values);
   }
 }
