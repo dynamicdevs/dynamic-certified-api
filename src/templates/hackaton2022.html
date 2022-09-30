@@ -6,8 +6,8 @@
   {{{ styles }}}
 </head>
 
-<body class="px-18 h-[793px] w-[1122px] flex flex-col justify-center bg-origin-border bg-center bg-cover space-y-8"
-  style="background-image: url({{assetsUrl}}/templates/{{eventCode}}/bg-winner-1st.png)">
+<body class="px-18 h-[793px] w-[1122px] flex flex-col justify-center bg-origin-border bg-center bg-cover"
+  style="background-image: url({{assetsUrl}}/templates/{{eventCode}}/bg-participant.png)">
   <header class="flex justify-end w-full">
     <img src="{{assetsUrl}}/templates/{{eventCode}}/logo-hackathon2022.png" alt="Logo Hackathon 2022"
       class="h-[92px] w-[237px]">
@@ -16,16 +16,19 @@
     <div class="w-full flex flex-col justify-center">
       <img src="{{assetsUrl}}/logo-dynamic.svg" alt="Logo Dynamic Devs" class="w-[270px]">
       <div class="flex flex-col mt-6 space-y-2">
-        <h6 class="text-heading-06-case text-primary-wb-white font-semibold uppercase">otorga el segndo puesto a</h6>
-        <div class="text-heading-03-case text-primary-wb-white font-bold uppercase flex flex-col space-y-1.5">
+        <h6 class="text-heading-06-case text-primary-neutral-100 font-semibold uppercase">agradece y certifica a</h6>
+        <div class="text-heading-03-case text-primary-main-400 font-bold uppercase flex flex-col space-y-1.5">
           <h2>{{name}}</h2>
           <h2>{{lastname}}</h2>
         </div>
-        <h3 class="text-heading-05 text-primary-neutral-200 font-bold">{{eventName}}</h3>
-        <h6 class="text-heading-08-case text-primary-neutral-300 font-bold uppercase">{{issueDate}}</h6>
+        <p class="text-paragraph-02 text-primary-neutral-100 w-[547px]">
+          por haber participado y completado satisfactoriamente las actividades del evento online
+        </p>
+        <h3 class="text-heading-05 text-primary-main-300 font-bold">{{eventName}}</h3>
+        <h6 class="text-heading-08-case text-primary-neutral-400 font-bold uppercase">{{issueDate}}</h6>
       </div>
     </div>
-    <div class="w-60 flex flex-col justify-center space-y-20 text-primary-neutral-300 ">
+    <div class="w-60 flex flex-col justify-center space-y-20 text-primary-neutral-100 ">
       <div class="flex flex-col space-y-1">
         <div class="flex justify-center items-center h-26 self-center">
           <img src="{{assetsUrl}}/templates/{{eventCode}}/jonathan-gonzalez-signature.png" alt="Firma CEO"

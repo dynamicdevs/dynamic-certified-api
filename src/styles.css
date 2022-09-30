@@ -553,14 +553,6 @@ video {
   margin-top: 1.5rem;
 }
 
-.mr-8 {
-  margin-right: 2rem;
-}
-
-.mt-\[54px\] {
-  margin-top: 54px;
-}
-
 .flex {
   display: -webkit-flex;
   display: flex;
@@ -610,6 +602,10 @@ video {
   width: 270px;
 }
 
+.w-60 {
+  width: 15rem;
+}
+
 .w-\[154px\] {
   width: 154px;
 }
@@ -622,28 +618,8 @@ video {
   width: 94px;
 }
 
-.w-\[200px\] {
-  width: 200px;
-}
-
-.w-fit {
-  width: fit-content;
-}
-
 .w-\[547px\] {
   width: 547px;
-}
-
-.w-\[300px\] {
-  width: 300px;
-}
-
-.w-\[250px\] {
-  width: 250px;
-}
-
-.w-60 {
-  width: 15rem;
 }
 
 .flex-row {
@@ -671,21 +647,21 @@ video {
           justify-content: center;
 }
 
-.space-y-10 > :not([hidden]) ~ :not([hidden]) {
+.space-y-8 > :not([hidden]) ~ :not([hidden]) {
   --tw-space-y-reverse: 0;
-  margin-top: -webkit-calc(2.5rem * (1 - 0));
-  margin-top: calc(2.5rem * (1 - 0));
-  margin-top: -webkit-calc(2.5rem * (1 - var(--tw-space-y-reverse)));
-  margin-top: calc(2.5rem * (1 - var(--tw-space-y-reverse)));
-  margin-top: calc(2.5rem * (1 - 0));
-  margin-top: -webkit-calc(2.5rem * -webkit-calc(1 - 0));
-  margin-top: calc(2.5rem * calc(1 - 0));
-  margin-top: -webkit-calc(2.5rem * -webkit-calc(1 - var(--tw-space-y-reverse)));
-  margin-top: calc(2.5rem * calc(1 - var(--tw-space-y-reverse)));
-  margin-bottom: -webkit-calc(2.5rem * 0);
-  margin-bottom: calc(2.5rem * 0);
-  margin-bottom: -webkit-calc(2.5rem * var(--tw-space-y-reverse));
-  margin-bottom: calc(2.5rem * var(--tw-space-y-reverse));
+  margin-top: -webkit-calc(2rem * (1 - 0));
+  margin-top: calc(2rem * (1 - 0));
+  margin-top: -webkit-calc(2rem * (1 - var(--tw-space-y-reverse)));
+  margin-top: calc(2rem * (1 - var(--tw-space-y-reverse)));
+  margin-top: calc(2rem * (1 - 0));
+  margin-top: -webkit-calc(2rem * -webkit-calc(1 - 0));
+  margin-top: calc(2rem * calc(1 - 0));
+  margin-top: -webkit-calc(2rem * -webkit-calc(1 - var(--tw-space-y-reverse)));
+  margin-top: calc(2rem * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: -webkit-calc(2rem * 0);
+  margin-bottom: calc(2rem * 0);
+  margin-bottom: -webkit-calc(2rem * var(--tw-space-y-reverse));
+  margin-bottom: calc(2rem * var(--tw-space-y-reverse));
 }
 
 .space-x-8 > :not([hidden]) ~ :not([hidden]) {
@@ -773,23 +749,6 @@ video {
   margin-bottom: calc(5rem * var(--tw-space-y-reverse));
 }
 
-.space-y-8 > :not([hidden]) ~ :not([hidden]) {
-  --tw-space-y-reverse: 0;
-  margin-top: -webkit-calc(2rem * (1 - 0));
-  margin-top: calc(2rem * (1 - 0));
-  margin-top: -webkit-calc(2rem * (1 - var(--tw-space-y-reverse)));
-  margin-top: calc(2rem * (1 - var(--tw-space-y-reverse)));
-  margin-top: calc(2rem * (1 - 0));
-  margin-top: -webkit-calc(2rem * -webkit-calc(1 - 0));
-  margin-top: calc(2rem * calc(1 - 0));
-  margin-top: -webkit-calc(2rem * -webkit-calc(1 - var(--tw-space-y-reverse)));
-  margin-top: calc(2rem * calc(1 - var(--tw-space-y-reverse)));
-  margin-bottom: -webkit-calc(2rem * 0);
-  margin-bottom: calc(2rem * 0);
-  margin-bottom: -webkit-calc(2rem * var(--tw-space-y-reverse));
-  margin-bottom: calc(2rem * var(--tw-space-y-reverse));
-}
-
 .self-end {
   -webkit-align-self: flex-end;
           align-self: flex-end;
@@ -798,20 +757,6 @@ video {
 .self-center {
   -webkit-align-self: center;
           align-self: center;
-}
-
-.border {
-  border-width: 1px;
-}
-
-.border-secondary-main-300 {
-  --tw-border-opacity: 1;
-  border-color: rgba(183, 94, 255, var(--tw-border-opacity));
-}
-
-.border-secondary-main-700 {
-  --tw-border-opacity: 1;
-  border-color: rgba(75, 0, 134, var(--tw-border-opacity));
 }
 
 .bg-cover {
@@ -826,11 +771,6 @@ video {
   background-origin: border-box;
 }
 
-.py-8 {
-  padding-top: 2rem;
-  padding-bottom: 2rem;
-}
-
 .px-18 {
   padding-left: 4.5rem;
   padding-right: 4.5rem;
@@ -839,11 +779,6 @@ video {
 .py-\[37px\] {
   padding-top: 37px;
   padding-bottom: 37px;
-}
-
-.px-28 {
-  padding-left: 7rem;
-  padding-right: 7rem;
 }
 
 .font-montserrat {
@@ -875,18 +810,6 @@ video {
 }
 
 .text-paragraph-04 {
-  font-size: 0.75rem;
-  line-height: 1rem;
-  letter-spacing: 0px;
-}
-
-.text-heading-03 {
-  font-size: 3.5rem;
-  line-height: 5rem;
-  letter-spacing: 0px;
-}
-
-.text-heading-08 {
   font-size: 0.75rem;
   line-height: 1rem;
   letter-spacing: 0px;
