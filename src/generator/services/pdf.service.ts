@@ -21,6 +21,7 @@ export class PdfService {
     data: Type,
     template: string,
     path: string,
+    styles?: string,
   ) {
     const options = {
       format: PageSize.A4,
@@ -33,6 +34,7 @@ export class PdfService {
         ...data,
         certificatesUrl: this.certificatesUrl,
         assetsUrl: this.assetsUrl,
+        styles: styles,
       },
       path: path,
       type: '',

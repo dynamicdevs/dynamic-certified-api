@@ -2,11 +2,11 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { CertificatesModule } from '@certificates/certificates.module';
+import { GeneratorModule } from '@generator/generator.module';
 
 import config from '@env';
 import * as Joi from 'joi';
-import { CertificatesModule } from '@certificates/certificates.module';
-import { GeneratorModule } from './generator/generator.module';
 
 @Module({
   imports: [

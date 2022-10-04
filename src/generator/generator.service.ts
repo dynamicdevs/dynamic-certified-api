@@ -1,3 +1,4 @@
+import { basename, dirname, extname, resolve } from 'path';
 import { BlobServiceClient, BlockBlobClient } from '@azure/storage-blob';
 import { Certificate } from '@models';
 import { CERTIFICATE_SHEET_NAME, longDateFormat } from '@utils';
@@ -5,13 +6,13 @@ import { CertificateSheetLib } from '@lib/certificateSheet.lib';
 import { CertificatesService } from '@certificates/certificates.service';
 import { Conditional } from '@enum';
 import { ConfigType } from '@nestjs/config';
+import { fromPath } from 'pdf2pic';
 import { Inject, Injectable } from '@nestjs/common';
 import { PdfService } from './services/pdf.service';
-import { resolve } from 'path';
+import { pdfToImageResponse } from '@dtos/pdfToImage.dto';
 import { v4 as uuidV4 } from 'uuid';
 
 import config from '@env';
-import nodeHtmlToImage from 'node-html-to-image';
 
 import * as fs from 'fs';
 import * as QRCode from 'qrcode';
@@ -62,15 +63,15 @@ export class GeneratorService {
 
           try {
             await this.generateFiles(certificate, path);
-          } catch (err) {
-            throw new Error(err);
-          }
 
-          fs.rm(`${this.outputPath}/${path}`, { recursive: true }, (err) => {
-            if (err) {
-              throw err;
-            }
-          });
+            fs.rm(`${this.outputPath}/${path}`, { recursive: true }, (err) => {
+              if (err) {
+                throw err;
+              }
+            });
+          } catch (err) {
+            throw new Error('An error has occurred. Files were not generated.');
+          }
         }
         return certificate;
       }),
@@ -101,13 +102,13 @@ export class GeneratorService {
   }
 
   private formatData(certificate: Certificate) {
-    const filename = this.getFilename(certificate);
     certificate.id = certificate.id || uuidV4();
     certificate.issueDate = longDateFormat(certificate.issueDate);
     certificate.name = certificate.name.trim().split(' ')[0];
     certificate.lastname = certificate.lastname.trim().split(' ')[0];
     certificate.shouldBeGenerated = Conditional.NO;
 
+    const filename = this.getFilename(certificate);
     const path = `${certificate.eventCode}/${certificate.id}/${filename}`;
     certificate.certificateImgUrl = `${path}.png`;
     certificate.certificatePdfUrl = `${path}.pdf`;
@@ -123,14 +124,19 @@ export class GeneratorService {
 
     if (!response) throw new Error('QR code was not generated');
 
-    const responseQR = this.upload(qrPath);
+    const responseQR = await this.upload(qrPath);
 
     if (!responseQR)
       throw new Error('QR code files was not upload to storage.');
 
-    const templateUrl = `src/generator/templates/${certificate.templateName}.html`;
+    const templateUrl = `src/templates/${certificate.templateName}.html`;
     const template = fs.readFileSync(
       resolve(process.cwd(), templateUrl),
+      'utf8',
+    );
+
+    const stylesContent = fs.readFileSync(
+      resolve(process.cwd(), 'src/styles.css'),
       'utf8',
     );
 
@@ -138,41 +144,45 @@ export class GeneratorService {
       certificate,
       template,
       `${this.outputPath}/${certificate.certificatePdfUrl}`,
+      `<style>${stylesContent}</style>`,
     );
 
-    if (responsePDF) this.upload(certificate.certificatePdfUrl);
+    if (!responsePDF)
+      throw new Error('An error has occurred. PDF file was not generate.');
 
     const responseImage = await this.generateImage(
-      certificate,
-      template,
+      `${this.outputPath}/${certificate.certificatePdfUrl}`,
       `${this.outputPath}/${certificate.certificateImgUrl}`,
     );
 
-    if (responseImage) this.upload(certificate.certificateImgUrl);
+    if (!responseImage)
+      throw new Error('An error has occurred. Image file was not generate.');
+
+    await Promise.all([
+      this.upload(certificate.certificatePdfUrl),
+      this.upload(certificate.certificateImgUrl),
+    ]);
   }
 
-  private async generateImage<Type>(
-    data: Type,
-    template: string,
-    path: string,
-  ) {
+  private async generateImage(inputPath: string, outputPath: string) {
     const options = {
-      html: template,
-      content: [
-        {
-          ...data,
-          certificatesUrl: this.certificatesUrl,
-          assetsUrl: this.assetsUrl,
-          output: path,
-        },
-      ],
+      density: 100,
+      saveFilename: basename(outputPath, extname(outputPath)),
+      savePath: dirname(outputPath),
+      format: 'png',
     };
 
+    const storeAsImage = fromPath(inputPath, options);
+    const pageToConvertAsImage = 1;
+
     try {
-      await nodeHtmlToImage(options);
+      const response = await storeAsImage(pageToConvertAsImage);
+      fs.renameSync((response as pdfToImageResponse).path, outputPath);
       return true;
     } catch (err) {
-      throw new Error(err);
+      throw new Error(
+        'An error has occurred. Pdf file was not converted to png.',
+      );
     }
   }
 
