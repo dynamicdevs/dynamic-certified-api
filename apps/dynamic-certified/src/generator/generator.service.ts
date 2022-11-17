@@ -1,22 +1,22 @@
 import { basename, dirname, extname, resolve } from 'path';
 import { BlobServiceClient, BlockBlobClient } from '@azure/storage-blob';
-import { Certificate } from '@models';
-import { CERTIFICATE_SHEET_NAME, longDateFormat } from '@utils';
-import { CertificateSheetLib } from '@lib/certificateSheet.lib';
-import { CertificatesService } from '@certificates/certificates.service';
-import { Conditional } from '@enum';
-import { ConfigType } from '@nestjs/config';
-import { fromPath } from 'pdf2pic';
-import { Inject, Injectable } from '@nestjs/common';
-import { PdfService } from './services/pdf.service';
-import { pdfToImageResponse } from '@dtos/pdfToImage.dto';
 import { v4 as uuidV4 } from 'uuid';
 
-import config from '@env';
+import config from '../environment';
 
 import * as fs from 'fs';
 import * as QRCode from 'qrcode';
 import * as util from 'util';
+import { Injectable, Inject } from '@nestjs/common';
+import { ConfigType } from '@nestjs/config';
+import { fromPath } from 'pdf2pic';
+import { CertificatesService } from '../certificates/certificates.service';
+import { pdfToImageResponse } from '../dtos/pdfToImage.dto';
+import { Conditional } from '../enum';
+import { CertificateSheetLib } from '../lib/certificateSheet.lib';
+import { Certificate } from '../models';
+import { CERTIFICATE_SHEET_NAME, longDateFormat } from '../utils';
+import { PdfService } from './services/pdf.service';
 
 @Injectable()
 export class GeneratorService {

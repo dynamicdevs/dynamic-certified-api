@@ -1,5 +1,40 @@
 {
   "$schema": "https://json.schemastore.org/nest-cli",
   "collection": "@nestjs/schematics",
-  "sourceRoot": "src"
+  "sourceRoot": "apps/dynamic-certified/src",
+  "monorepo": true,
+  "root": "apps/dynamic-certified",
+  "compilerOptions": {
+    "webpack": true,
+    "tsConfigPath": "apps/dynamic-certified/tsconfig.app.json"
+  },
+  "projects": {
+    "dynamic-certified": {
+      "type": "application",
+      "root": "apps/dynamic-certified",
+      "entryFile": "main",
+      "sourceRoot": "apps/dynamic-certified/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/dynamic-certified/tsconfig.app.json"
+      }
+    },
+    "certified-app": {
+      "type": "application",
+      "root": "apps/certified-app",
+      "entryFile": "index",
+      "sourceRoot": "apps/certified-app/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/certified-app/tsconfig.app.json"
+      }
+    },
+    "pdg-generator": {
+      "type": "application",
+      "root": "apps/pdg-generator",
+      "entryFile": "index",
+      "sourceRoot": "apps/pdg-generator/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/pdg-generator/tsconfig.app.json"
+      }
+    }
+  }
 }

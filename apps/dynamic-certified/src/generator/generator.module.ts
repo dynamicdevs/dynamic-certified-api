@@ -1,9 +1,9 @@
-import { CertificateSheetLib } from '@lib/certificateSheet.lib';
-import { CertificatesModule } from '@certificates/certificates.module';
 import { GeneratorController } from './generator.controller';
 import { GeneratorService } from './generator.service';
 import { Module } from '@nestjs/common';
 import { PdfService } from './services/pdf.service';
+import { CertificatesModule } from '../certificates/certificates.module';
+import { CertificateSheetLib } from '../lib/certificateSheet.lib';
 
 @Module({
   imports: [CertificatesModule],

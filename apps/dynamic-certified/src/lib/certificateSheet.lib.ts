@@ -1,5 +1,5 @@
 import { Inject } from '@nestjs/common';
-import config from '@env';
+import config from '../environment';
 import { ConfigType } from '@nestjs/config';
 import { JWT } from 'google-auth-library';
 import { google } from 'googleapis';

@@ -16,10 +16,6 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false,
-    "paths": {
-      "@env": ["src/environment"],
-      "@*":["src/*"]
-    }
+    "noFallthroughCasesInSwitch": false
   }
 }

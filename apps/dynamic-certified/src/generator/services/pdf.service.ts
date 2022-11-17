@@ -1,9 +1,9 @@
 import { ConfigType } from '@nestjs/config';
 import { create } from 'pdf-creator-node';
 import { Inject, Injectable } from '@nestjs/common';
-import { Orientation, PageSize } from '@enum';
+import { Orientation, PageSize } from '../../enum';
 
-import config from '@env';
+import config from '../../environment';
 
 @Injectable()
 export class PdfService {

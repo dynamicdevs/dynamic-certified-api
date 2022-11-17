@@ -4,10 +4,10 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { Certificate } from '@models';
-import { toCamelCaseFromText } from '@utils';
-import { CertificateSheetLib } from '@lib/certificateSheet.lib';
-import { CertificateResponseDto } from '@dtos/certificate.dto';
+import { CertificateResponseDto } from '../dtos/certificate.dto';
+import { CertificateSheetLib } from '../lib/certificateSheet.lib';
+import { Certificate } from '../models';
+import { toCamelCaseFromText } from '../utils';
 
 @Injectable()
 export class CertificatesService {
